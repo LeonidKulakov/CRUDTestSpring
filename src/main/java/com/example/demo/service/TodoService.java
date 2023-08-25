@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.entity.Todo;
 import com.example.demo.entity.User;
+import com.example.demo.exception.TodoNotFoundException;
 import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.model.TodoModel;
 import com.example.demo.repo.TodoRepo;
@@ -24,12 +25,10 @@ public class TodoService {
         return TodoModel.toModel(todoRepo.save(todo));
     }
 
-    public TodoModel updateTodo(Long userId, String title, String description) throws UserNotFoundException {
-        User user = userRepo.findById(userId).orElse(null);
-        if (user == null) throw new UserNotFoundException("Такого пользователя не существует");
-        Todo todo = todoRepo.findById(userId).orElse(null);
-      //  Todo todo = todoRepo.findByTitleAndUser(title, user);
-        todo.setDescription(description);
+    public TodoModel todoIsDone(Long userId, String title) throws TodoNotFoundException {
+        Todo todo = todoRepo.findByTitleAndUserId(title, userId);
+        if (todo == null) throw new TodoNotFoundException("Такое дело не найдено");
+        todo.setCompleted(true);
         return TodoModel.toModel(todoRepo.save(todo));
     }
 

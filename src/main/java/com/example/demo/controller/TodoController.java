@@ -1,11 +1,14 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Todo;
+import com.example.demo.exception.TodoNotFoundException;
 import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,13 +29,13 @@ public class TodoController {
             return ResponseEntity.badRequest().body("Общая ошибка");
         }
     }
-    private ResponseEntity updateTodo(@RequestParam(name = "id") Long userId,
-                                      @RequestParam String title,
-                                      @RequestParam String description){
+    @PutMapping("/{id}")
+    private ResponseEntity todoIsDone(@PathVariable("id") Long userId,
+                                      @RequestParam String title){
         try {
-           return ResponseEntity.ok(todoService.updateTodo(userId,title,description));
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.badRequest().body("все плохо");
+            return ResponseEntity.ok(todoService.todoIsDone(userId,title));
+        } catch (TodoNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
     }
